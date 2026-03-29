@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Giant Panda - Conservation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+    :root {
+      --panda-green:      #C5E0B4;
+      --panda-dark-green: #a8cf92;
+      --text-on-dark:     #FFFFFF;
+      --text-on-dark-dim: rgba(255, 255, 255, 0.7);
+      --text-on-light:    #000000;
+      --nav-bg:           rgba(0, 0, 0, 0.2);
+      --nav-border:       rgba(255, 255, 255, 0.1);
+
+      --ink:            #0a0a0a;
+      --cream:          hsl(45 30% 97%);
+      --bamboo:         hsl(135 30% 28%);
+      --bamboo-light:   hsl(130 20% 88%);
+      --muted-fg:       hsl(0 0% 45%);
+      --border:         hsl(130 15% 86%);
+      --card-bg:        hsl(45 20% 99%);
+      --shadow-card:    0 4px 24px -4px hsl(135 30% 20% / 0.12), 0 1px 4px hsl(135 30% 20% / 0.08);
+      --shadow-hero:    0 24px 64px -12px hsl(135 30% 10% / 0.4);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #000;
+      color: var(--text-on-dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+    @keyframes slowZoomInAndOut {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    @keyframes scrollUpDown {
+      0%   { transform: translate(-50%, 0);     opacity: 0.4; }
+      50%  { transform: translate(-50%, -10px); opacity: 0.6; }
+      100% { transform: translate(-50%, 0);     opacity: 0.4; }
+    }
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    .fade-up { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    .main-header {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 30px 60px;
+    }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-capsule {
+      background: var(--nav-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--nav-border);
+      padding: 12px 30px;
+      border-radius: 50px;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    .logo {
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Playfair Display', serif;
+      color: var(--text-on-dark);
+    }
+    .nav-links { display: flex; gap: 25px; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-on-dark-dim);
+      font-size: 0.9rem;
+      font-weight: 400;
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--text-on-dark); }
+    .btn-support {
+      background-color: var(--panda-green);
+      color: var(--text-on-light);
+      padding: 12px 25px;
+      border-radius: 50px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+    }
+    .btn-support:hover { background-color: var(--panda-dark-green); }
+
+    .hero-section {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .animated-bg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0) 65%, #000 100%),
+        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+
+        url('panda-hero.jpg');
+      background-size: cover;
+      background-position: center;
+      background-color: #111; 
+      animation: slowZoomInAndOut 20s ease-in-out infinite;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      padding: 180px 80px 100px;
+      max-width: 900px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .badge {
+      color: var(--panda-green);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      opacity: 0.8;
+      border: var(--panda-dark-green) solid 1px;
+      padding: 12px;
+      border-radius: 28px;
+      background-color: rgba(211, 255, 182, 0.1);
+      backdrop-filter: blur(10px);
+      width: 240px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--panda-green);
+      animation: pulse 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(64px, 9vw, 110px);
+      line-height: 1.05;
+      font-weight: 900;
+      margin-bottom: 30px;
+      color: var(--text-on-dark);
+      animation: fade-in-up 0.8s ease 0.1s both;
+    }
+    .highlight { color: var(--panda-green); font-style: italic; }
+    .hero-description {
+      max-width: 550px;
+      font-size: 1.1rem;
+      color: var(--text-on-dark-dim);
+      margin-bottom: 40px;
+      animation: fade-in-up 0.8s ease 0.2s both;
+    }
+    .hero-description em { color: white; font-style: italic; font-weight: 500; }
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      animation: fade-in-up 0.8s ease 0.3s both;
+    }
+    .hero-buttons a, .hero-buttons button { cursor: pointer; transition: all 0.4s ease; }
+    .btn-primary {
+      background-color: #FFFFFF;
+      color: #000000;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-primary:hover {
+      background-color: var(--panda-green);
+      color: #000000;
+      transform: translateY(-2px);
+      box-shadow: 0px 10px 30px rgba(197, 224, 180, 0.4);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #FFFFFF;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      backdrop-filter: blur(5px);
+    }
+    .btn-outline:hover {
+      border-color: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: scrollUpDown 2.5s ease-in-out infinite;
+    }
+    .scroll-text { font-size: 0.7rem; letter-spacing: 4px; margin-bottom: 10px; opacity: 0.5; }
+    .scroll-line { width: 1px; height: 40px; background-color: #FFFFFF; opacity: 0.5; }
+
+    .stats { background: var(--ink); padding: 5rem 0; border-top: 1px solid rgba(255,255,255,0.05); }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+    .stat-item { text-align: center; }
+    .stat-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      color: var(--panda-green);
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 0.5rem;
+    }
+    .stat-label { color: var(--text-on-dark-dim); font-size: 0.875rem; line-height: 1.3; }
+
+    .section-light { padding: 8rem 0; background: var(--cream); color: var(--ink); }
+    .section-dark  { padding: 8rem 0; background: var(--ink); }
+    .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .section-tag {
+      display: inline-block;
+      color: var(--bamboo);
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+    .section-tag-light { color: var(--panda-green); }
+    .section-title {
+      font-weight: 700;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      color: var(--ink);
+    }
+    .section-title em { font-style: italic; color: var(--bamboo); }
+    .section-title-light { color: var(--cream); }
+    .section-title-light em { color: var(--panda-green); }
+    .section-text {
+      color: var(--muted-fg);
+      font-size: 1.1rem;
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+    .section-text-light { color: var(--text-on-dark-dim); }
+    .section-center { text-align: center; margin-bottom: 5rem; }
+
+    .img-container { position: relative; }
+    .img-container .glow {
+      position: absolute; inset: -1rem;
+      border-radius: 2rem;
+      filter: blur(2rem);
+      opacity: 0.5;
+    }
+    .img-container img {
+      position: relative;
+      border-radius: 2rem;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      box-shadow: var(--shadow-hero);
+      background: hsl(130 15% 20%); 
+    }
+
+    .img-placeholder {
+      position: relative;
+      border-radius: 2rem;
+      width: 100%;
+      aspect-ratio: 1;
+      background: hsl(130 15% 15%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      box-shadow: var(--shadow-hero);
+      
+    }
+    .img-placeholder .ph-icon { font-size: 3rem; opacity: 0.5; }
+    .img-placeholder .ph-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--panda-green);
+      opacity: 0.6;
+      font-family: 'Inter', sans-serif;
+    }
+    .species-badge {
+      position: absolute;
+      bottom: -1.5rem; right: -1.5rem;
+      background: var(--card-bg);
+      border-radius: 1.5rem;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border);
+    }
+    .species-badge .name { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--bamboo); font-size: 1.5rem; }
+    .species-badge .sub { color: var(--muted-fg); font-size: 0.875rem; }
+
+    .taxonomy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2.5rem; }
+    .taxonomy-card {
+      background: var(--card-bg);
+      border-radius: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+    }
+    .taxonomy-card .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-fg); margin-bottom: 0.25rem; }
+    .taxonomy-card .value { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 1.1rem; color: var(--ink); }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .fact-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      transition: all 0.3s;
+    }
+    .fact-card:hover { 
+       background: rgba(255,255,255,0.07);
+       border-color: rgba(197,224,180,0.2); 
+      }
+    .fact-card .emoji { 
+      font-size: 2.5rem; 
+      margin-bottom: 1.25rem; 
+      display: block; 
+      transition: transform 0.3s;
+     }
+    .fact-card:hover .emoji { 
+      transform: scale(1.1); 
+    }
+    .fact-card h3 { 
+      font-weight: 600; 
+      color: var(--cream); 
+      font-size: 1.2rem; 
+      margin-bottom: 0.75rem;
+     }
+    .fact-card p { 
+      color: var(--text-on-dark-dim);
+       font-size: 0.95rem;
+        line-height: 1.65; 
+      }
+
+    .progress-list { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 1rem; 
+      margin-bottom: 2.5rem; }
+    .progress-item .progress-header { 
+      display: flex;
+      justify-content:space-between; 
+      margin-bottom: 0.375rem; 
+    }
+    .progress-item .region { 
+      font-weight: 500; 
+      font-size: 0.875rem; 
+      color: var(--ink); 
+    }
+    .progress-item .percent { 
+      font-weight: 600; 
+      font-size: 0.875rem; 
+      color: var(--bamboo); 
+    }
+    .progress-bar { 
+      height: 0.5rem; 
+      border-radius: 9999px; 
+      background: hsl(45 25% 88%); 
+      overflow: hidden; 
+    }
+    .progress-fill { 
+      height: 100%; 
+      border-radius: 9999px; 
+      background: var(--bamboo); 
+    }
+    .info-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    .info-chip {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+      font-size: 0.8rem;
+      color: var(--muted-fg);
+      line-height: 1.4;
+    }
+
+    .gallery-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+    .gallery-item {
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: var(--shadow-hero);
+      background: hsl(130 15% 15%);
+    }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+    .gallery-item:hover img { transform: scale(1.05); }
+    .gallery-row2 { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-top: 1.5rem; }
+
+    .gallery-ph {
+      width: 100%; height: 100%;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+  
+      border-radius: 1.5rem;
+    }
+    .gallery-ph .ph-icon { 
+      font-size: 2.5rem; 
+      opacity: 0.4; 
+    }
+    .gallery-ph .ph-label { 
+      font-size: 0.75rem; 
+      letter-spacing: 0.08em; 
+      text-transform: uppercase; 
+      color: var(--panda-green); 
+      opacity: 0.5;
+     }
+
+    .cons-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
+    .cons-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: var(--shadow-card);
+    }
+    .cons-card .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .cons-card .stat { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--bamboo); font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .cons-card h3 { font-weight: 600; font-size: 1.2rem; margin-bottom: 0.75rem; color: var(--ink); }
+    .cons-card p { color: var(--muted-fg); font-size: 0.95rem; line-height: 1.65; }
+
+    .cta-banner {
+      position: relative;
+      overflow: hidden;
+      border-radius: 2rem;
+      background: var(--bamboo);
+      padding: 4rem 3rem;
+      text-align: center;
+      box-shadow: var(--shadow-hero);
+    }
+    .cta-banner .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom right, var(--bamboo), hsl(135 30% 22%), hsl(82 30% 35%));
+      opacity: 0.9;
+    }
+    .cta-banner .content { 
+      position: relative; 
+      z-index: 10; 
+    }
+    .cta-banner .big-emoji { 
+      font-size: 3.5rem; 
+      margin-bottom: 1rem;
+     }
+    .cta-banner h3 { 
+      color: var(--cream); 
+      font-weight: 700; 
+      font-size: clamp(1.8rem, 4vw, 2.5rem); 
+      margin-bottom: 1rem; 
+    }
+    .cta-banner p {
+       color: rgba(255,255,255,0.75); 
+       font-size: 1.1rem; 
+       margin-bottom: 2rem; 
+       max-width: 36rem; 
+       margin-left: auto; 
+       margin-right: auto;
+       }
+    .cta-btns { 
+      display: flex; 
+      gap: 1rem; 
+      justify-content: center; 
+      flex-wrap: wrap; 
+    }
+    .btn-cta-primary {
+      background: var(--cream); color: var(--bamboo); font-weight: 600;
+      padding: 1rem 2rem; border-radius: 9999px;
+      box-shadow: var(--shadow-card); transition: all 0.3s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-cta-primary:hover { background: var(--panda-green); color: var(--ink); }
+    .btn-cta-outline {
+      border: 1px solid rgba(255,255,255,0.3); color: var(--cream); font-weight: 500;
+      padding: 1rem 2rem; border-radius: 9999px; transition: background 0.3s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-cta-outline:hover { background: rgba(255,255,255,0.1); }
+
+    
+    footer {
+      background: var(--ink);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 3rem 0;
+    }
+    .footer-inner { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      flex-wrap: 
+      wrap; gap: 1rem; 
+    }
+    .footer-logo { 
+      font-family: 'Playfair Display', serif; 
+      font-weight: 700; 
+      color: var(--cream); 
+      font-size: 1.25rem; 
+    }
+    .footer-text {
+       color: rgba(255,255,255,0.35); 
+      font-size: 0.875rem; 
+      text-align: center;
+     }
+    .footer-copy {
+       color: rgba(255,255,255,0.25); 
+       font-size: 0.75rem; 
+      }
+
+    @media (max-width: 900px) {
+      .main-header { padding: 20px 24px; }
+      .nav-links { display: none; }
+      .hero-content { padding: 140px 30px 80px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-2col { grid-template-columns: 1fr; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-row2 { grid-template-columns: 1fr; }
+      .cons-cards { grid-template-columns: 1fr; }
+      .info-chips { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; text-align: center; }
+      .species-badge { bottom: -1rem; right: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="main-header">
+    <nav class="nav-container">
+      <div class="nav-capsule">
+        <span class="logo">🐼 Panda</span>
+        <div class="nav-links">
+          <a href="#about">About</a>
+          <a href="#behavior">Behavior</a>
+          <a href="#habitat">Habitat</a>
+          <a href="#conservation">Conservation</a>
+        </div>
+      </div>
+      <button class="btn-support">Support Conservation</button>
+    </nav>
+  </header>
+
+  <main class="hero-section">
+    <div class="animated-bg"></div>
+
+    <div class="hero-content">
+      <div class="badge">
+        <span class="dot"></span>
+        VULNERABLE SPECIES
+      </div>
+      <h1 class="hero-title">The Giant<br><span class="highlight">Panda.</span></h1>
+      <p class="hero-description">
+        A symbol of peace and conservation. Discover the fascinating world of
+        <em>Ailuropoda melanoleuca</em> — the bear that captured humanity's heart.
+      </p>
+      <div class="hero-buttons">
+        <a href="#about" class="btn-primary">Discover More</a>
+        <a href="#gallery" class="btn-outline">View Gallery</a>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <span class="scroll-text">SCROLL</span>
+      <div class="scroll-line"></div>
+    </div>
+  </main>
+
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+  </section>
+
+  <section id="about" class="section-light">
+    <div class="container">
+      <div class="grid-2col">
+
+       
+        <div class="fade-up img-container">
+          <div class="glow" style="background:linear-gradient(to bottom right,hsl(135 30% 28%/0.15),hsl(82 40% 58%/0.1))"></div>
+          <div class="img-placeholder">
+            <img src="panda-portrait.jpg" alt="Giant panda portrait">
+          </div>
+           
+          <div class="species-badge">
+            <div class="name">Ailuropoda</div>
+            <div class="sub">melanoleuca</div>
+          </div>
+        </div>
+
+        <div class="fade-up" style="transition-delay:0.15s">
+          <span class="section-tag">About the Giant Panda</span>
+          <h2 class="section-title">Nature's Most<br><em>Beloved Bear</em></h2>
+          <p class="section-text">The giant panda is a bear native to South Central China. Despite their bear classification, they are renowned for their gentle, solitary nature and their near-exclusive bamboo diet — an evolutionary curiosity shared by few other mammals.</p>
+          <p class="section-text">Recognized by their distinctive black-and-white coat, giant pandas have become one of the world's most iconic animals and a global symbol for wildlife conservation efforts.</p>
+          <div class="taxonomy-grid" id="taxonomy-grid"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="behavior" class="section-dark">
+    <div class="container">
+      <div class="section-center fade-up">
+        <span class="section-tag section-tag-light">Behavior &amp; Biology</span>
+        <h2 class="section-title section-title-light">Life of a Panda</h2>
+      </div>
+      <div class="cards-grid" id="behavior-grid"></div>
+    </div>
+  </section>
+
+  <section id="habitat" class="section-light">
+    <div class="container">
+      <div class="grid-2col">
+
+        <div class="fade-up" style="transition-delay:0s">
+          <span class="section-tag">Where They Live</span>
+          <h2 class="section-title">The Misty<br><em>Bamboo Forests</em></h2>
+          <p class="section-text">Giant pandas live in the mountain ranges of central China — primarily in Sichuan province, with smaller populations in Shaanxi and Gansu. These cool, wet bamboo forests provide everything a panda needs.</p>
+          <div class="progress-list" id="progress-list"></div>
+          <div class="info-chips" id="info-chips"></div>
+        </div>
+
+        <div class="fade-up img-container" style="transition-delay:0.15s">
+          <div class="glow" style="background:linear-gradient(to bottom left,hsl(82 40% 58%/0.1),hsl(135 30% 28%/0.1))"></div>
+          <div class="img-placeholder">
+            <img src="panda-eating.jpg" alt="Giant panda eating bamboo"> 
+          </div>
+          
+          
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery" class="section-dark">
+    <div class="container">
+      <div class="section-center fade-up">
+        <span class="section-tag section-tag-light">Photo Gallery</span>
+        <h2 class="section-title section-title-light">In Their Element</h2>
+      </div>
+      <div class="fade-up">
+
+        <div class="gallery-grid">
+          
+          <div class="gallery-item" style="aspect-ratio:16/9">
+            <div class="gallery-ph">
+              
+              <img src="panda-hero.jpg" alt="Panda in bamboo forest"> 
+            </div>
+            
+          </div>
+
+          
+          <div class="gallery-item">
+            <div class="gallery-ph">
+              
+              <img src="panda-portrait.jpg" alt="Panda portrait">
+            </div>
+             
+          </div>
+        </div>
+
+        <div class="gallery-row2">
+          
+          <div class="gallery-item">
+            <div class="gallery-ph">
+              <img src="panda-eating.jpg" alt="Panda eating bamboo"> 
+            </div>
+             
+          </div>
+
+        
+          <div class="gallery-item" style="aspect-ratio:16/9">
+            <div class="gallery-ph">
+              <img src="panda-play.jpg" alt="Pandas playing"> 
+            </div>
+            
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  
+  <section id="conservation" class="section-light">
+    <div class="container">
+      <div class="fade-up" style="max-width:56rem;margin:0 auto;text-align:center">
+        <span class="section-tag">Conservation Status</span>
+        <h2 class="section-title">A Story of<br><em>Hope &amp; Recovery</em></h2>
+        <p class="section-text" style="font-size:1.2rem;margin-bottom:4rem">In 2016, the giant panda was downlisted from "Endangered" to "Vulnerable" on the IUCN Red List — a landmark conservation success fueled by decades of dedicated protection, habitat restoration, and captive breeding.</p>
+      </div>
+      <div class="cons-cards" id="cons-cards"></div>
+      <div class="cta-banner fade-up">
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="big-emoji">🐼</div>
+          <h3>Help Protect Giant Pandas</h3>
+          <p>Every action counts. Support WWF and the China Conservation and Research Center for the Giant Panda in their mission to protect this beloved species.</p>
+          <div class="cta-btns">
+            <a href="https://www.worldwildlife.org/species/giant-panda" target="_blank" rel="noopener noreferrer" class="btn-cta-primary">Support WWF →</a>
+            <a href="https://en.wikipedia.org/wiki/Giant_panda" target="_blank" rel="noopener noreferrer" class="btn-cta-outline">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">🐼 Panda</div>
+        <p class="footer-text">Built with love for one of the world's most cherished animals. Data sourced from WWF &amp; IUCN.</p>
+        <p class="footer-copy">© 2024 Panda World</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+
+    const stats = [
+      { value: "1,864", label: "Giant Pandas in the Wild",  icon: "🌿" },
+      { value: "99%",   label: "Diet is Bamboo",            icon: "🎋" },
+      { value: "150 kg",label: "Max Adult Weight",          icon: "⚖️" },
+      { value: "20 yrs",label: "Lifespan in the Wild",      icon: "🕰️" },
+    ];
+    document.getElementById("stats-grid").innerHTML = stats.map((s, i) =>
+      `<div class="stat-item fade-up" style="transition-delay:${i*0.1}s">
+        <div class="stat-icon">${s.icon}</div>
+        <div class="stat-value">${s.value}</div>
+        <div class="stat-label">${s.label}</div>
+      </div>`
+    ).join("");
+
+    const taxonomy = [
+      { label: "Kingdom", value: "Animalia"    },
+      { label: "Class",   value: "Mammalia"    },
+      { label: "Family",  value: "Ursidae"     },
+      { label: "Status",  value: "Vulnerable"  },
+    ];
+    document.getElementById("taxonomy-grid").innerHTML = taxonomy.map(t =>
+      `<div class="taxonomy-card">
+        <div class="label">${t.label}</div>
+        <div class="value">${t.value}</div>
+      </div>`
+    ).join("");
+
+    const facts = [
+      { emoji:"🎋", title:"Bamboo Devotion",    body:"Pandas spend 10–16 hours per day eating, consuming 12–38 kg of bamboo daily. Their pseudo-thumb helps them grasp bamboo stalks with remarkable precision." },
+      { emoji:"🌙", title:"Solitary Creatures",  body:"Giant pandas are largely solitary animals, each establishing a home range in the mountains. They communicate via scent marks and vocalizations." },
+      { emoji:"🐣", title:"Tiny Cubs",           body:"Newborn panda cubs weigh only 100–200g — about 1/900th of their mother's size — making them the smallest newborn relative to the mother of any placental mammal." },
+      { emoji:"🏔️", title:"Mountain Climbers",  body:"Wild pandas live in mountainous forests at elevations between 1,200–3,100 meters. They're strong swimmers and surprisingly good tree climbers." },
+      { emoji:"🎵", title:"Voice of the Panda",  body:"Pandas communicate through about 11 distinct vocalizations, including bleating, honking, and a unique 'moan' used during mating season." },
+      { emoji:"💤", title:"Rest &amp; Sleep",    body:"Unlike other bears, giant pandas do not hibernate. Their low-nutrition bamboo diet means they must eat year-round and rest frequently." },
+    ];
+    document.getElementById("behavior-grid").innerHTML = facts.map((f, i) =>
+      `<div class="fact-card fade-up" style="transition-delay:${i*0.08}s">
+        <span class="emoji">${f.emoji}</span>
+        <h3>${f.title}</h3>
+        <p>${f.body}</p>
+      </div>`
+    ).join("");
+
+    const regions = [
+      { region: "Sichuan Province",  pandas: "80%" },
+      { region: "Shaanxi Province",  pandas: "11%" },
+      { region: "Gansu Province",    pandas: "9%"  },
+    ];
+    document.getElementById("progress-list").innerHTML = regions.map(r =>
+      `<div class="progress-item">
+        <div class="progress-header">
+          <span class="region">${r.region}</span>
+          <span class="percent">~${r.pandas}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${r.pandas}"></div>
+        </div>
+      </div>`
+    ).join("");
+
+    document.getElementById("info-chips").innerHTML =
+      ["Elevation: 1,200–3,100m", "Temperature: 2–14°C", "26 Nature Reserves"]
+        .map(t => `<div class="info-chip">${t}</div>`).join("");
+
+    const consCards = [
+      { icon:"🛡️", title:"Protected Reserves",   body:"China has established 67 panda nature reserves, protecting 66% of the wild panda population and 53% of their habitat.", stat:"67 Reserves"       },
+      { icon:"🌱", title:"Habitat Restoration",  body:"Reforestation efforts have connected fragmented habitats, creating wildlife corridors that allow panda populations to mix and thrive.", stat:"+11.8% Habitat" },
+      { icon:"🐼", title:"Captive Breeding",     body:"Over 600 pandas now live in captivity across China and abroad. Successful captive breeding programs have contributed to reintroduction efforts.", stat:"600+ in Captivity" },
+    ];
+    document.getElementById("cons-cards").innerHTML = consCards.map((c, i) =>
+      `<div class="cons-card fade-up" style="transition-delay:${i*0.1}s">
+        <div class="icon">${c.icon}</div>
+        <div class="stat">${c.stat}</div>
+        <h3>${c.title}</h3>
+        <p>${c.body}</p>
+      </div>`
+    ).join("");
+
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
